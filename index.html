@@ -8,20 +8,23 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   :root {
-    --bg-color: #0f1016;
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-hover: rgba(255, 255, 255, 0.06);
-    --gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    --gradient-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
-    --green: #10b981;
-    --amber: #f59e0b;
-    --red: #ef4444;
-    --text: #f8fafc;
-    --text2: #94a3b8;
-    --text3: #64748b;
+    /* Light Theme Variables */
+    --bg-color: #f3f4f6;       
+    --card-bg: #ffffff;        
+    --input-bg: #f8fafc;       
+    --border: #e2e8f0;         
+    --border-hover: #cbd5e1;
+    --accent: #2563eb;         
+    --accent-hover: #1d4ed8;
+    --green: #059669;
+    --amber: #d97706;
+    --red: #dc2626;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
     --radius: 20px;
     --radius-sm: 12px;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,202 +32,225 @@
   html, body { 
     height: 100%; 
     background-color: var(--bg-color);
-    background-image: 
-      radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-      radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
-    background-attachment: fixed;
-    color: var(--text); 
+    color: var(--text-main); 
     font-family: 'Inter', system-ui, sans-serif; 
     -webkit-font-smoothing: antialiased;
   }
   
   body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 0; }
 
-  .page { display: none; width: 100%; max-width: 500px; padding: 32px 20px 40px; min-height: 100vh; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+  .page { display: none; width: 100%; max-width: 500px; padding: 40px 20px; min-height: 100vh; flex-direction: column; animation: fadeIn 0.3s ease-out; }
   .page.active { display: flex; }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .hd { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-  .hd-icon { width: 48px; height: 48px; background: var(--gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25); }
+  /* Header */
+  .hd { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; justify-content: center;}
+  .hd-icon { width: 48px; height: 48px; background: var(--accent); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); color: #fff; }
+  .hd-icon svg { width: 24px; height: 24px; }
   .hd-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-  .hd-sub { font-size: 13px; color: var(--text2); margin-top: 2px; font-weight: 500; }
+  .hd-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; font-weight: 500; }
 
+  /* Cards */
   .card { 
-    background: var(--glass-bg); border: 1px solid var(--glass-border); 
+    background: var(--card-bg); border: 1px solid var(--border); 
     border-radius: var(--radius); padding: 24px; margin-bottom: 20px; 
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
   }
 
+  /* Inputs */
   .name-input {
     width: 100%; padding: 16px; border-radius: var(--radius-sm);
-    background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
-    color: #fff; font-size: 16px; font-weight: 600; outline: none;
-    text-align: center; font-family: inherit; margin-bottom: 8px;
-    transition: all 0.2s;
+    background: var(--input-bg); border: 1px solid var(--border);
+    color: var(--text-main); font-size: 16px; font-weight: 600; outline: none;
+    text-align: center; font-family: inherit; margin-bottom: 8px; transition: all 0.2s;
   }
-  .name-input:focus { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); }
+  .name-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+  .name-input::placeholder { color: #94a3b8; font-weight: 400; }
 
   .code-big { 
-    font-size: 42px; font-weight: 800; letter-spacing: 0.25em; 
-    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-align: center; font-family: 'Courier New', monospace; padding: 12px 0; 
+    font-size: 42px; font-weight: 800; letter-spacing: 0.2em; 
+    color: var(--accent); text-align: center; font-family: 'Courier New', monospace; padding: 12px 0; 
   }
   
   .digits { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
   .digits input {
     width: 44px; height: 56px; font-size: 24px; font-weight: 700;
     font-family: 'Courier New', monospace; text-align: center;
-    background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
-    border-radius: 12px; color: #fff; outline: none; transition: all 0.2s;
+    background: var(--input-bg); border: 1px solid var(--border);
+    border-radius: 12px; color: var(--text-main); outline: none; transition: all 0.2s;
   }
-  .digits input:focus { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); transform: translateY(-2px); }
+  .digits input:focus { border-color: var(--accent); background: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
   .lang-select {
     width: 100%; padding: 14px; border-radius: var(--radius-sm);
-    background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
-    color: #fff; font-size: 14px; font-weight: 500; outline: none;
-    margin-bottom: 16px; font-family: inherit; appearance: none; cursor: pointer;
+    background: var(--input-bg); border: 1px solid var(--border);
+    color: var(--text-main); font-size: 14px; font-weight: 500; outline: none;
+    margin-bottom: 16px; font-family: inherit; cursor: pointer; transition: border 0.2s;
   }
-  .lang-select option { background: var(--bg-color); color: #fff; }
+  .lang-select:focus { border-color: var(--accent); }
 
+  /* Buttons & SVGs */
   .btn { 
     width: 100%; padding: 14px; border-radius: var(--radius-sm); 
     font-size: 15px; font-weight: 600; cursor: pointer; border: none; 
     display: flex; align-items: center; justify-content: center; gap: 8px; 
-    transition: all 0.2s; letter-spacing: 0.3px; font-family: inherit;
+    transition: all 0.2s; font-family: inherit;
   }
-  .btn-primary { background: var(--gradient); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
-  .btn-primary:hover { background: var(--gradient-hover); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
-  .btn-primary:active { transform: translateY(0); }
+  .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
   
-  .btn-ghost { background: var(--glass-bg); color: #fff; border: 1px solid var(--glass-border); backdrop-filter: blur(8px); }
-  .btn-ghost:hover { background: var(--glass-hover); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
   
-  .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.2); }
-  .btn-danger:hover { background: rgba(239, 68, 68, 0.2); transform: translateY(-2px); }
+  .btn-ghost { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--input-bg); border-color: var(--border-hover); transform: translateY(-1px); }
   
-  .btn-video { background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
-  .btn-video:hover { background: rgba(16, 185, 129, 0.25); transform: translateY(-2px); }
+  .btn-danger { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+  .btn-danger:hover { background: #fee2e2; }
+  
+  .btn-video { background: #f0fdf4; color: var(--green); border: 1px solid #bbf7d0; }
+  .btn-video:hover { background: #dcfce7; }
 
   .btn-row { display: flex; gap: 12px; margin-top: 16px; margin-bottom: 16px;}
   .btn-row .btn { flex: 1; padding: 14px; }
 
+  /* Status Bar */
   .status { 
     display: flex; align-items: center; gap: 12px; padding: 14px 18px; 
-    background: var(--glass-bg); border-radius: var(--radius-sm); 
-    margin-bottom: 16px; font-size: 14px; font-weight: 500; color: var(--text); 
-    border: 1px solid var(--glass-border); backdrop-filter: blur(8px);
+    background: var(--card-bg); border-radius: var(--radius-sm); 
+    margin-bottom: 16px; font-size: 14px; font-weight: 500; color: var(--text-main); 
+    border: 1px solid var(--border); box-shadow: var(--shadow-sm);
   }
-  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px currentColor; }
-  .dot-amber { color: var(--amber); background: var(--amber); animation: blink 1.5s infinite; }
-  .dot-green { color: var(--green); background: var(--green); }
-  .dot-red { color: var(--red); background: var(--red); animation: blink 1s infinite; }
-  .dot-pulse { color: #a855f7; background: #a855f7; animation: pulse 1.5s infinite; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-amber { background: var(--amber); box-shadow: 0 0 8px rgba(217, 119, 6, 0.6); animation: blink 1.5s infinite; }
+  .dot-green { background: var(--green); box-shadow: 0 0 8px rgba(5, 150, 105, 0.6); }
+  .dot-red { background: var(--red); box-shadow: 0 0 8px rgba(220, 38, 38, 0.6); animation: blink 1s infinite; }
+  .dot-pulse { background: var(--accent); box-shadow: 0 0 8px rgba(37, 99, 235, 0.6); animation: pulse 1.5s infinite; }
   
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
-  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.5} }
 
-  /* ---- VIDEO UI & TOGGLES ---- */
-  .video-wrapper {
-    display: none; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;
-    background: var(--glass-bg); padding: 12px; border-radius: var(--radius); border: 1px solid var(--glass-border);
-  }
+  /* Video UI */
+  .video-settings { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+  .video-settings input { cursor: pointer; accent-color: var(--accent); width: 16px; height: 16px; }
+
+  .video-wrapper { display: none; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; background: var(--card-bg); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
   .video-wrapper.active { display: grid; }
-  .video-box {
-    position: relative; width: 100%; aspect-ratio: 3/4; background: #000; 
-    border-radius: var(--radius-sm); overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-  }
+  .video-box { position: relative; width: 100%; aspect-ratio: 3/4; background: #000; border-radius: var(--radius-sm); overflow: hidden; }
   .video-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-  .video-label {
-    position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-    padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #fff;
-  }
+  .video-label { position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; color: #fff; }
   
   #video-controls { display: none; margin-bottom: 20px; }
 
-  .mic-area { text-align: center; margin: 8px 0 16px; }
+  /* Transcription Mic */
+  .mic-area { text-align: center; margin: 8px 0 16px; background: var(--card-bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm);}
   .mic-btn {
-    width: 64px; height: 64px; border-radius: 50%;
-    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    width: 64px; height: 64px; border-radius: 50%; background: var(--input-bg); border: 1px solid var(--border);
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-    font-size: 28px; transition: all 0.3s; margin-bottom: 8px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: all 0.3s; margin-bottom: 12px; color: var(--text-main); box-shadow: var(--shadow-sm);
   }
-  .mic-btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
-  .mic-btn.live { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.5); animation: liveRing 2s infinite; }
-  @keyframes liveRing { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+  .mic-btn svg { width: 28px; height: 28px; }
+  .mic-btn:hover:not(:disabled) { border-color: var(--border-hover); background: #fff; transform: scale(1.05); }
+  .mic-btn.live { background: #fef2f2; border-color: #fecaca; color: var(--red); animation: liveRing 2s infinite; }
+  @keyframes liveRing { 0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(220, 38, 38, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); } }
 
   .transcript-container { margin-bottom: 12px; }
   .transcript {
-    background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm); padding: 12px; min-height: 80px; max-height: 120px;
-    overflow-y: auto; font-size: 15px; line-height: 1.5; color: #fff;
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px; min-height: 80px; max-height: 120px;
+    overflow-y: auto; font-size: 15px; line-height: 1.6; color: var(--text-main); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
   }
-  .remote-box { border-left: 3px solid #6366f1; } 
-  .local-box { border-left: 3px solid #10b981; }  
+  .remote-box { border-left: 4px solid var(--accent); } 
+  .local-box { border-left: 4px solid var(--green); }  
   
-  .ph { color: var(--text3); font-size: 13px; font-style: italic; text-align: center; display: block; margin-top: 5px; }
-  .interim { color: var(--text2); }
+  .ph { color: var(--text-muted); font-size: 13px; font-style: italic; text-align: center; display: block; margin-top: 5px; }
+  .interim { color: var(--text-muted); }
 
   .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .slabel { font-size: 12px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; display: inline-block; }
+  .slabel { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; display: inline-block; margin-bottom: 8px;}
 
-  /* Chat UI */
-  .chat-wrapper { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
-  .chat-box { background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); height: 160px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; border: 1px solid var(--glass-border); }
-  .chat-msg { max-width: 85%; padding: 8px 12px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-break: break-word; }
-  .chat-msg.local { align-self: flex-end; background: var(--gradient); color: #fff; border-bottom-right-radius: 2px; }
-  .chat-msg.remote { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: #fff; border-bottom-left-radius: 2px; }
-  .chat-name { font-size: 10px; opacity: 0.7; margin-bottom: 2px; font-weight: 700; display: block; text-transform: uppercase; }
+  /* Text Chat */
+  .chat-wrapper { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+  .chat-box { background: var(--input-bg); border-radius: var(--radius-sm); height: 180px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; border: 1px solid var(--border); }
+  .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.4; word-break: break-word; }
+  .chat-msg.local { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 2px; }
+  .chat-msg.remote { align-self: flex-start; background: #fff; border: 1px solid var(--border); color: var(--text-main); border-bottom-left-radius: 2px; box-shadow: var(--shadow-sm);}
+  .chat-name { font-size: 10px; opacity: 0.8; margin-bottom: 4px; font-weight: 700; display: block; text-transform: uppercase; }
   
   .chat-input-area { display: flex; gap: 8px; }
-  .chat-input-area input { flex: 1; padding: 12px; border-radius: var(--radius-sm); background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: #fff; outline: none; }
-  .chat-input-area input:focus { border-color: #a855f7; }
-  .chat-input-area button { padding: 0 16px; border-radius: var(--radius-sm); background: #4f46e5; border: none; color: #fff; font-weight: 600; cursor: pointer; }
+  .chat-input-area input { flex: 1; padding: 14px; border-radius: var(--radius-sm); background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); outline: none; transition: border 0.2s;}
+  .chat-input-area input:focus { border-color: var(--accent); background: #fff; }
+  .chat-input-area button { padding: 0 20px; border-radius: var(--radius-sm); background: var(--accent); border: none; color: #fff; font-weight: 600; cursor: pointer; transition: background 0.2s;}
+  .chat-input-area button:hover { background: var(--accent-hover); }
 
-  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #fff; color: #0f1016; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  /* Loading */
+  .loading { text-align: center; padding: 80px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+  .spin-icon { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+  .loading p { color: var(--text-main); font-size: 16px; font-weight: 600; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; box-shadow: var(--shadow-md); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 </style>
 </head>
 <body>
 
 <div class="page active" id="p-home">
   <div class="hd">
-    <div class="hd-icon">🌉</div>
+    <div class="hd-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-9 5 18 3-9h6"/></svg>
+    </div>
     <div><div class="hd-title">VoiceBridge</div><div class="hd-sub">Video, Voice & Text Chat</div></div>
   </div>
 
   <div class="card">
-    <div class="slabel">1. Set Your Name</div>
+    <span class="slabel">1. Set Your Name</span>
     <input type="text" id="username" class="name-input" placeholder="e.g. Prem Kumar" autocomplete="off">
   </div>
 
   <div class="card" id="sp-panel">
-    <div class="slabel">2. Start a New Room</div>
+    <span class="slabel">2. Start a New Room</span>
     <div class="code-big" id="code-disp">— — — — — —</div>
-    <button class="btn btn-primary" onclick="createRoom()">✨ Generate Code & Enter</button>
+    <button class="btn btn-primary" onclick="createRoom()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      Generate Code & Enter
+    </button>
   </div>
 
   <div class="card" id="vw-panel">
-    <div class="slabel">Or Join an Existing Room</div>
+    <span class="slabel">Or Join an Existing Room</span>
     <div class="digits" id="digits"></div>
-    <button class="btn btn-ghost" onclick="joinRoom()">→ Join Session</button>
+    <button class="btn btn-ghost" onclick="joinRoom()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      Join Session
+    </button>
   </div>
 </div>
 
 <div class="page" id="p-conn">
-  <div class="hd"><div class="hd-icon">🌉</div><div><div class="hd-title">VoiceBridge</div></div></div>
-  <div style="text-align:center; padding: 80px 0; color: #fff; font-weight: 600;">
-    <div style="font-size: 48px; animation: spin 1s linear infinite; margin-bottom: 20px;">⚙️</div>
+  <div class="hd">
+    <div class="hd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-9 5 18 3-9h6"/></svg></div>
+    <div><div class="hd-title">VoiceBridge</div></div>
+  </div>
+  <div class="loading">
+    <div class="spin-icon"></div>
     <p id="conn-msg">Connecting to secure server…</p>
   </div>
 </div>
 
 <div class="page" id="p-room">
-  <div class="hd">
-    <div class="hd-icon">🎙</div>
-    <div><div class="hd-title">Live Session</div><div class="hd-sub" id="rm-codelbl">Code: ——</div></div>
+  <div class="hd" style="justify-content: space-between; width: 100%;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div class="hd-icon" style="width: 40px; height: 40px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-9 5 18 3-9h6"/></svg></div>
+      <div class="hd-title" style="font-size: 20px;">Live Session</div>
+    </div>
+    <div style="background: var(--input-bg); padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 700; color: var(--accent); border: 1px solid var(--border);" id="rm-codelbl">Code: ——</div>
   </div>
   
   <div class="status" id="rm-status-bar">
@@ -232,8 +258,17 @@
     <span id="rm-status">Waiting for partner to connect…</span>
   </div>
 
-  <div class="btn-row" id="video-start-row" style="margin-top: 0;">
-    <button class="btn btn-video" onclick="startVideoCall()">📹 Start Video Call</button>
+  <div id="video-start-row">
+    <div class="video-settings">
+      <input type="checkbox" id="call-audio-check" checked>
+      <label for="call-audio-check">Include Call Audio (Uncheck for Mobile Captions)</label>
+    </div>
+    <div class="btn-row" style="margin-top: 0;">
+      <button class="btn btn-video" onclick="startVideoCall()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+        Start Video Call
+      </button>
+    </div>
   </div>
   
   <div class="video-wrapper" id="video-wrapper">
@@ -248,34 +283,45 @@
   </div>
 
   <div class="btn-row" id="video-controls" style="margin-top: 0;">
-    <button class="btn btn-ghost" id="btn-toggle-video" onclick="toggleVideo()">📹 Video Off</button>
-    <button class="btn btn-ghost" id="btn-toggle-audio" onclick="toggleAudio()">🎤 Mute Call Audio</button>
+    <button class="btn btn-ghost" id="btn-toggle-video" onclick="toggleVideo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+      Video Off
+    </button>
+    <button class="btn btn-ghost" id="btn-toggle-audio" onclick="toggleAudio()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+      Mute Call Audio
+    </button>
   </div>
 
   <div class="mic-area">
     <select id="lang-sel" class="lang-select">
-      <option value="en-IN">Speech Language: English (India)</option>
-      <option value="en-US">Speech Language: English (US)</option>
-      <option value="en-GB">Speech Language: English (UK)</option>
-      <option value="te-IN">Speech Language: Telugu (తెలుగు)</option>
-      <option value="hi-IN">Speech Language: Hindi (हिंदी)</option>
+      <option value="en-IN">Caption Language: English (India)</option>
+      <option value="en-US">Caption Language: English (US)</option>
+      <option value="en-GB">Caption Language: English (UK)</option>
+      <option value="te-IN">Caption Language: Telugu (తెలుగు)</option>
+      <option value="hi-IN">Caption Language: Hindi (हिंदी)</option>
     </select>
-    <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled>🎙</button>
-    <div style="font-size: 12px; color: var(--text3);" id="mic-lbl">Turn on mic for live translation captions</div>
+    <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+    </button>
+    <div class="mic-label" id="mic-lbl">Turn on mic for live translation captions</div>
   </div>
 
   <div class="transcript-container">
-    <div class="info-row"><span class="slabel" id="partner-lbl" style="color:#a78bfa;">Partner's Captions</span></div>
+    <div class="info-row"><span class="slabel" id="partner-lbl" style="color:var(--accent); margin:0;">Partner's Captions</span></div>
     <div class="transcript remote-box" id="remote-box"><span class="ph">Waiting for them to speak…</span></div>
   </div>
 
   <div class="transcript-container">
-    <div class="info-row"><span class="slabel" id="local-lbl" style="color:#34d399;">Your Captions</span></div>
+    <div class="info-row"><span class="slabel" id="local-lbl" style="color:var(--green); margin:0;">Your Captions</span></div>
     <div class="transcript local-box" id="local-box"><span class="ph">Your translated words appear here…</span></div>
   </div>
 
   <div class="chat-wrapper">
-    <span class="slabel" style="color:#fbbf24;">💬 Live Text Chat</span>
+    <span class="slabel" style="display:flex; align-items:center; gap:6px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      Live Text Chat
+    </span>
     <div class="chat-box" id="chat-box"><span class="ph">No messages yet. Send a greeting!</span></div>
     <div class="chat-input-area">
       <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()">
@@ -284,8 +330,14 @@
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-ghost" onclick="clearAll()">🗑 Clear Chat</button>
-    <button class="btn btn-danger" onclick="endSession()">✕ Leave Room</button>
+    <button class="btn btn-ghost" onclick="clearAll()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      Clear Chat
+    </button>
+    <button class="btn btn-danger" onclick="endSession()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+      Leave Room
+    </button>
   </div>
 </div>
 
@@ -293,11 +345,17 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  VoiceBridge v8.0 — WebRTC Video + Mute/Camera Toggles
+//  VoiceBridge v9.0 — Light Mode UI & SVG Update (Logic Intact)
 // ═══════════════════════════════════════════════════════════════════
 
 const ABLY_CDN = 'https://cdn.ably.com/lib/ably.min-2.js';
 const ABLY_KEY = 'Qy5e8g.F15N0g:RFc-t7Ot13TerkLHivhrKiokU5GvP6a2Ugtcx--ttpY';
+
+// SVG Definitions for dynamic buttons
+const svgVidOn = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>`;
+const svgVidOff = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+const svgMicOn = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`;
+const svgMicOff = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.88"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`;
 
 let CODE = '', myUID = '', myName = '', partnerName = 'Partner';
 let ablyClient = null, ablyChannel = null, ablyReady = false;
@@ -305,7 +363,6 @@ let recog = null, micOn = false, isRecognizing = false;
 let localTxt = '', remoteTxt = '';
 let peerConnected = false, lastPubTime = 0, handshakeTimer = null; 
 
-// WebRTC State
 let peerConnection = null;
 let localStream = null;
 let isVideoMuted = false;
@@ -358,7 +415,7 @@ async function connectAbly(){
 
   ablyClient.connection.on('connected', async () => {
     ablyReady = true;
-    const chName = 'vb-v80-' + CODE; 
+    const chName = 'vb-v81-' + CODE; 
     ablyChannel = ablyClient.channels.get(chName);
     ablyChannel.subscribe('msg', handleAblyMsg);
     
@@ -427,7 +484,7 @@ async function handleAblyMsg(msg){
   
   // --- WEBRTC SIGNALING ---
   if (d.t === 'webrtc-offer') {
-      await initWebRTC();
+      await initWebRTC(false); 
       await peerConnection.setRemoteDescription(new RTCSessionDescription(d.offer));
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
@@ -455,26 +512,26 @@ function publish(obj){
 function createRoom(){ if(!checkName()) return; CODE = genCode(); $('code-disp').textContent = CODE.split('').join(' '); showPage('p-conn'); connectAbly(); }
 function joinRoom(){ if(!checkName()) return; let v = ''; for(let i=0;i<6;i++) v += ($('dg'+i)||{}).value || ''; if(v.length !== 6){ toast('Please enter all 6 digits.'); return; } CODE = v; showPage('p-conn'); connectAbly(); }
 
-// ── WebRTC Video Engine & Toggles ─────────────────────────────────────
-async function initWebRTC() {
+// ── WebRTC Video Engine & Smart Audio Routing ─────────────────────────
+async function initWebRTC(isInitiator = true) {
     if (peerConnection) return; 
     
     $('video-wrapper').classList.add('active');
     $('video-start-row').style.display = 'none'; 
-    $('video-controls').style.display = 'flex'; // Show toggles
+    $('video-controls').style.display = 'flex'; 
+
+    const wantAudio = $('call-audio-check').checked;
 
     try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: wantAudio });
         $('local-video').srcObject = localStream;
     } catch(err) {
-        toast('Camera/Mic permission denied for video call.');
+        toast('Camera permission denied.');
         return;
     }
 
     peerConnection = new RTCPeerConnection(iceServers);
-
     localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
     peerConnection.ontrack = event => { $('remote-video').srcObject = event.streams[0]; };
     peerConnection.onicecandidate = event => { if (event.candidate) { publish({ t: 'webrtc-ice', candidate: event.candidate }); } };
 }
@@ -482,11 +539,13 @@ async function initWebRTC() {
 async function startVideoCall() {
     if (!peerConnected) { toast('Wait for partner to join before calling.'); return; }
     toast('Starting video call...');
-    await initWebRTC();
+    await initWebRTC(true);
     
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    publish({ t: 'webrtc-offer', offer: offer });
+    if (peerConnection) {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        publish({ t: 'webrtc-offer', offer: offer });
+    }
 }
 
 function toggleVideo() {
@@ -495,7 +554,7 @@ function toggleVideo() {
         if (videoTrack) {
             isVideoMuted = !isVideoMuted;
             videoTrack.enabled = !isVideoMuted;
-            $('btn-toggle-video').innerHTML = isVideoMuted ? '🚫 Video On' : '📹 Video Off';
+            $('btn-toggle-video').innerHTML = isVideoMuted ? svgVidOff + ' Video On' : svgVidOn + ' Video Off';
             $('btn-toggle-video').style.color = isVideoMuted ? 'var(--red)' : '';
         }
     }
@@ -503,12 +562,14 @@ function toggleVideo() {
 
 function toggleAudio() {
     if (localStream) {
-        const audioTrack = localStream.getAudioTracks()[0];
-        if (audioTrack) {
+        const audioTracks = localStream.getAudioTracks();
+        if (audioTracks.length > 0) {
             isAudioMuted = !isAudioMuted;
-            audioTrack.enabled = !isAudioMuted;
-            $('btn-toggle-audio').innerHTML = isAudioMuted ? '🔇 Unmute Audio' : '🎤 Mute Call Audio';
+            audioTracks[0].enabled = !isAudioMuted;
+            $('btn-toggle-audio').innerHTML = isAudioMuted ? svgMicOff + ' Unmute Audio' : svgMicOn + ' Mute Call Audio';
             $('btn-toggle-audio').style.color = isAudioMuted ? 'var(--red)' : '';
+        } else {
+            toast('You unchecked call audio. Mute not applicable.');
         }
     }
 }
@@ -544,7 +605,7 @@ function startMic(){
 
   recog.onstart = () => {
     isRecognizing = true; micOn = true;
-    $('mic-btn').classList.add('live'); $('mic-btn').textContent = '🔴';
+    $('mic-btn').classList.add('live'); 
   };
 
   recog.onresult = e => {
@@ -560,7 +621,11 @@ function startMic(){
     if (nf || (now - lastPubTime > 250)) { publish({ t:'tx', f:localTxt, i:interim }); lastPubTime = now; }
   };
 
-  recog.onerror = ev => { if(ev.error === 'no-speech' || ev.error === 'aborted') return; stopMic(); };
+  recog.onerror = ev => { 
+      if(ev.error === 'no-speech' || ev.error === 'aborted') return; 
+      toast('Mic error: ' + ev.error); 
+      stopMic(); 
+  };
 
   recog.onend = () => {
     isRecognizing = false;
@@ -572,7 +637,7 @@ function startMic(){
 
 function stopMic(){
   micOn = false; if(recog && isRecognizing){ try{ recog.stop(); }catch(e){} } isRecognizing = false;
-  $('mic-btn').classList.remove('live'); $('mic-btn').textContent = '🎙'; 
+  $('mic-btn').classList.remove('live'); 
 }
 
 function renderLocal(f, i){
@@ -599,17 +664,15 @@ function cleanup(){
   if(micOn) stopMic();
   if(handshakeTimer) clearInterval(handshakeTimer);
   
-  // Stop WebRTC
   if(peerConnection) { peerConnection.close(); peerConnection = null; }
   if(localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
   $('video-wrapper').classList.remove('active');
-  $('video-start-row').style.display = 'flex';
+  $('video-start-row').style.display = 'block';
   $('video-controls').style.display = 'none';
 
-  // Reset toggles
   isVideoMuted = false; isAudioMuted = false;
-  $('btn-toggle-video').innerHTML = '📹 Video Off'; $('btn-toggle-video').style.color = '';
-  $('btn-toggle-audio').innerHTML = '🎤 Mute Call Audio'; $('btn-toggle-audio').style.color = '';
+  $('btn-toggle-video').innerHTML = svgVidOn + ' Video Off'; $('btn-toggle-video').style.color = '';
+  $('btn-toggle-audio').innerHTML = svgMicOn + ' Mute Call Audio'; $('btn-toggle-audio').style.color = '';
 
   if(ablyChannel){ try{ ablyChannel.presence.leave(); ablyChannel.unsubscribe(); }catch(e){} ablyChannel=null; }
   if(ablyClient){ try{ ablyClient.close(); }catch(e){} ablyClient=null; }
