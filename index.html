@@ -262,7 +262,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  VoiceBridge v5.3 — Mobile Auto-Recovery Update
+//  VoiceBridge v5.4 — Bulletproof Handshake Update
 // ═══════════════════════════════════════════════════════════════════
 
 if (window.location.protocol === 'file:') {
@@ -278,6 +278,7 @@ let recog = null, micOn = false, isRecognizing = false;
 let localTxt = '', remoteTxt = '';
 let peerConnected = false;
 let lastPubTime = 0; 
+let handshakeTimer = null; // New timer for forcing connection
 
 myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
@@ -349,19 +350,16 @@ async function connectAbly(){
 
   ablyClient.connection.on('connected', async () => {
     ablyReady = true;
-    const chName = 'vb-v53-' + CODE; 
+    // Updated channel name to ensure fresh connection
+    const chName = 'vb-v54-' + CODE; 
     ablyChannel = ablyClient.channels.get(chName);
 
     ablyChannel.subscribe('msg', handleAblyMsg);
-    await ablyChannel.presence.enter({ uid: myUID });
-
-    ablyChannel.presence.subscribe('enter', mem => {
-      if(mem.clientId !== myUID) onPeerPresence(true);
-    });
     
-    ablyChannel.presence.subscribe('leave', mem => {
-      if(mem.clientId !== myUID) onPeerPresence(false);
-    });
+    // Attempt standard presence
+    await ablyChannel.presence.enter({ uid: myUID });
+    ablyChannel.presence.subscribe('enter', mem => { if(mem.clientId !== myUID) onPeerPresence(true); });
+    ablyChannel.presence.subscribe('leave', mem => { if(mem.clientId !== myUID) onPeerPresence(false); });
 
     try {
       const resultPage = await ablyChannel.presence.get();
@@ -370,9 +368,7 @@ async function connectAbly(){
               if(m.clientId !== myUID) onPeerPresence(true); 
           });
       }
-    } catch(err) {
-      console.error("Presence check failed:", err);
-    }
+    } catch(err) { console.error("Presence check failed:", err); }
 
     showPage('p-room');
     txt('rm-codelbl', 'Code: ' + CODE);
@@ -381,9 +377,23 @@ async function connectAbly(){
        setDot('rm-dot', 'amber');
        txt('rm-status', 'Waiting for partner to join…');
     }
+
+    // =========================================================
+    // THE BULLETPROOF HANDSHAKE:
+    // If Presence fails, we aggressively shout out to the room
+    // =========================================================
+    publish({ t: 'hello' }); // Say hi immediately
+    
+    // Keep saying hi every 1.5 seconds until we get an answer
+    handshakeTimer = setInterval(() => {
+        if (peerConnected || !ablyReady) {
+            clearInterval(handshakeTimer); // Stop shouting once connected
+        } else {
+            publish({ t: 'hello' });
+        }
+    }, 1500);
   });
 
-  // Mobile network recovery
   ablyClient.connection.on('disconnected', () => {
     ablyReady = false;
     setDot('rm-dot','red'); txt('rm-status','Reconnecting to server…'); 
@@ -398,13 +408,13 @@ function onPeerPresence(isConnected){
     txt('rm-status', 'Partner connected! Tap mic to speak.');
     $('mic-btn').disabled = false;
     txt('mic-lbl', 'Tap mic to start streaming');
-    toast('Partner joined the room!');
+    // Clear handshake timer since we are connected
+    if(handshakeTimer) clearInterval(handshakeTimer);
   } else {
     setDot('rm-dot', 'amber');
     txt('rm-status', 'Partner disconnected — waiting…');
     if(!micOn) $('mic-btn').disabled = true;
     txt('mic-lbl', 'Waiting for partner to return…');
-    toast('Partner left the room.');
   }
 }
 
@@ -415,6 +425,23 @@ function handleAblyMsg(msg){
   if(!d || d.code !== CODE) return;
   if(d.uid === myUID) return; 
 
+  // ANY incoming message guarantees the partner is in the room!
+  if (!peerConnected) {
+      onPeerPresence(true);
+  }
+
+  // Handle the Bulletproof Handshake
+  if (d.t === 'hello') {
+      // The other device is shouting hello. We must reply so they know we are here.
+      publish({ t: 'hello_back' });
+      return; 
+  }
+  if (d.t === 'hello_back') {
+      // They successfully heard our hello. (We already set peerConnected = true above).
+      return; 
+  }
+
+  // Normal messages
   if(d.t === 'tx'){
     renderRemote(d.f || '', d.i || '');
   }
@@ -506,14 +533,12 @@ function startMic(){
     }
   };
 
-  // Gracefully ignore silent errors, catch true failures
   recog.onerror = ev => {
     if(ev.error === 'no-speech' || ev.error === 'aborted') return;
     toast('Mic error: ' + ev.error);
     stopMic();
   };
 
-  // The critical mobile fix: Auto-Recovery Watchdog
   recog.onend = () => {
     isRecognizing = false;
     if(micOn){
@@ -522,7 +547,6 @@ function startMic(){
             try { 
                 recog.start(); 
             } catch(e) { 
-                // The browser refused to wake the mic up
                 toast('Mobile browser paused your mic. Tap to resume.');
                 stopMic(); 
             }
@@ -583,6 +607,7 @@ function endSession(){
 
 function cleanup(){
   if(micOn) stopMic();
+  if(handshakeTimer) clearInterval(handshakeTimer);
   if(ablyChannel){ try{ ablyChannel.presence.leave(); ablyChannel.unsubscribe(); }catch(e){} ablyChannel=null; }
   if(ablyClient){ try{ ablyClient.close(); }catch(e){} ablyClient=null; }
   ablyReady=false; peerConnected=false;
