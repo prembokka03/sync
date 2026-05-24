@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>VoiceBridge — Two-Way Voice to Text</title>
+<title>VoiceBridge — Voice & Text Chat</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -40,32 +40,42 @@
   
   body { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 0; }
 
-  .page { display: none; width: 100%; max-width: 460px; padding: 32px 24px 40px; min-height: 100vh; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+  .page { display: none; width: 100%; max-width: 480px; padding: 32px 20px 40px; min-height: 100vh; flex-direction: column; animation: fadeIn 0.4s ease-out; }
   .page.active { display: flex; }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .hd { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; }
+  .hd { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
   .hd-icon { width: 48px; height: 48px; background: var(--gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25); }
   .hd-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
   .hd-sub { font-size: 13px; color: var(--text2); margin-top: 2px; font-weight: 500; }
 
   .card { 
     background: var(--glass-bg); border: 1px solid var(--glass-border); 
-    border-radius: var(--radius); padding: 24px; margin-bottom: 24px; 
+    border-radius: var(--radius); padding: 24px; margin-bottom: 20px; 
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
 
-  .code-big { 
-    font-size: 46px; font-weight: 800; letter-spacing: 0.25em; 
-    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-align: center; font-family: 'Courier New', monospace; padding: 16px 0; 
+  /* User Input */
+  .name-input {
+    width: 100%; padding: 16px; border-radius: var(--radius-sm);
+    background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+    color: #fff; font-size: 16px; font-weight: 600; outline: none;
+    text-align: center; font-family: inherit; margin-bottom: 8px;
+    transition: all 0.2s;
   }
-  .code-hint { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 24px; font-weight: 500; }
+  .name-input:focus { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); }
 
-  .digits { display: flex; gap: 10px; justify-content: center; margin-bottom: 24px; }
+  .code-big { 
+    font-size: 42px; font-weight: 800; letter-spacing: 0.25em; 
+    background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-align: center; font-family: 'Courier New', monospace; padding: 12px 0; 
+  }
+  .code-hint { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 20px; font-weight: 500; }
+
+  .digits { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
   .digits input {
-    width: 48px; height: 60px; font-size: 28px; font-weight: 700;
+    width: 44px; height: 56px; font-size: 24px; font-weight: 700;
     font-family: 'Courier New', monospace; text-align: center;
     background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
     border-radius: 12px; color: #fff; outline: none;
@@ -77,11 +87,9 @@
     width: 100%; padding: 14px; border-radius: var(--radius-sm);
     background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
     color: #fff; font-size: 14px; font-weight: 500; outline: none;
-    margin-bottom: 16px; font-family: inherit; appearance: none;
-    cursor: pointer;
+    margin-bottom: 16px; font-family: inherit; appearance: none; cursor: pointer;
   }
   .lang-select option { background: var(--bg-color); color: #fff; }
-  .lang-select:focus { border-color: #a855f7; }
 
   .btn { 
     width: 100%; padding: 16px; border-radius: var(--radius-sm); 
@@ -100,7 +108,7 @@
   .btn-danger:hover { background: rgba(239, 68, 68, 0.2); transform: translateY(-2px); }
   
   .btn-row { display: flex; gap: 12px; margin-top: 16px; }
-  .btn-row .btn { flex: 1; }
+  .btn-row .btn { flex: 1; padding: 14px; }
 
   .status { 
     display: flex; align-items: center; gap: 12px; padding: 14px 18px; 
@@ -120,57 +128,81 @@
 
   .mic-area { text-align: center; margin: 12px 0 24px; }
   .mic-btn {
-    width: 80px; height: 80px; border-radius: 50%;
+    width: 76px; height: 76px; border-radius: 50%;
     background: var(--glass-bg); border: 1px solid var(--glass-border);
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-    font-size: 32px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    font-size: 30px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
     margin-bottom: 12px; color: #fff; backdrop-filter: blur(12px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   }
   .mic-btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.3); transform: scale(1.05); }
   .mic-btn.live { 
-    background: rgba(239, 68, 68, 0.15); 
-    border-color: rgba(239, 68, 68, 0.5); 
+    background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.5); 
     animation: liveRing 2s cubic-bezier(0.1, 0.7, 1.0, 0.1) infinite; 
   }
-  
-  @keyframes liveRing { 
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 
-    70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); } 
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 
-  }
+  @keyframes liveRing { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
   .mic-label { font-size: 14px; font-weight: 500; color: var(--text2); }
 
+  /* Transcripts */
   .transcript-container { margin-bottom: 16px; }
   .transcript {
     background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border);
-    border-radius: var(--radius-sm); padding: 16px; min-height: 120px; max-height: 160px;
-    overflow-y: auto; font-size: 16px; line-height: 1.6;
+    border-radius: var(--radius-sm); padding: 14px; min-height: 100px; max-height: 140px;
+    overflow-y: auto; font-size: 15px; line-height: 1.6;
     word-break: break-word; color: #fff; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
   }
-  
   .remote-box { border-left: 3px solid #6366f1; } 
   .local-box { border-left: 3px solid #10b981; }  
   
-  .ph { color: var(--text3); font-size: 14px; font-weight: 400; font-style: italic; }
+  .ph { color: var(--text3); font-size: 14px; font-weight: 400; font-style: italic; text-align: center; display: block; margin-top: 10px; }
   .interim { color: var(--text2); }
 
   .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
-  .wc { color: var(--text2); font-size: 12px; font-weight: 500; }
+  .slabel { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; display: inline-block; }
+
+  /* ---- NEW CHAT UI ---- */
+  .chat-wrapper {
+    background: var(--glass-bg); border: 1px solid var(--glass-border);
+    border-radius: var(--radius); padding: 16px; margin-top: 8px; margin-bottom: 16px;
+    backdrop-filter: blur(12px);
+  }
+  .chat-box {
+    background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); border: 1px solid var(--glass-border);
+    height: 200px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;
+  }
+  .chat-msg {
+    max-width: 85%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; position: relative;
+  }
+  .chat-msg.local {
+    align-self: flex-end; background: var(--gradient); color: #fff; border-bottom-right-radius: 4px;
+  }
+  .chat-msg.remote {
+    align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: #fff; border-bottom-left-radius: 4px;
+  }
+  .chat-name { font-size: 10px; opacity: 0.7; margin-bottom: 4px; font-weight: 700; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+  
+  .chat-input-area { display: flex; gap: 8px; }
+  .chat-input-area input {
+    flex: 1; padding: 14px; border-radius: var(--radius-sm); background: rgba(0,0,0,0.3); 
+    border: 1px solid var(--glass-border); color: #fff; outline: none; font-family: inherit; transition: border 0.2s;
+  }
+  .chat-input-area input:focus { border-color: #a855f7; }
+  .chat-input-area button {
+    padding: 0 20px; border-radius: var(--radius-sm); background: #4f46e5; border: none; 
+    color: #fff; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .chat-input-area button:hover { background: #6366f1; transform: scale(1.05); }
 
   .loading { text-align: center; padding: 80px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
   .spin-icon { font-size: 48px; animation: spin 1s linear infinite; display: inline-block; filter: drop-shadow(0 0 10px rgba(168,85,247,0.4)); }
   .loading p { color: var(--text); font-size: 16px; font-weight: 600; }
-  .loading span { color: var(--text2); font-size: 14px; font-weight: 400; }
-
-  .slabel { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
 
   .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #fff; color: #0f1016; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; white-space: nowrap; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  .transcript::-webkit-scrollbar { width: 6px; }
-  .transcript::-webkit-scrollbar-track { background: transparent; }
-  .transcript::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  .transcript::-webkit-scrollbar, .chat-box::-webkit-scrollbar { width: 6px; }
+  .transcript::-webkit-scrollbar-track, .chat-box::-webkit-scrollbar-track { background: transparent; }
+  .transcript::-webkit-scrollbar-thumb, .chat-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
 </style>
 </head>
 <body>
@@ -178,27 +210,24 @@
 <div class="page active" id="p-home">
   <div class="hd">
     <div class="hd-icon">🌉</div>
-    <div><div class="hd-title">VoiceBridge</div><div class="hd-sub">Two-Way Real-time Translation</div></div>
+    <div><div class="hd-title">VoiceBridge</div><div class="hd-sub">Voice & Text Collaboration</div></div>
+  </div>
+
+  <div class="card">
+    <div class="slabel">1. Set Your Name</div>
+    <input type="text" id="username" class="name-input" placeholder="e.g. Prem Kumar" autocomplete="off">
   </div>
 
   <div class="card" id="sp-panel">
-    <div class="slabel">Start a New Room</div>
+    <div class="slabel">2. Start a New Room</div>
     <div class="code-big" id="code-disp">— — — — — —</div>
-    <div class="code-hint">Share this 6-digit code with your partner</div>
     <button class="btn btn-primary" onclick="createRoom()">✨ Generate Code & Enter</button>
   </div>
 
   <div class="card" id="vw-panel">
-    <div class="slabel">Join an Existing Room</div>
+    <div class="slabel">Or Join an Existing Room</div>
     <div class="digits" id="digits"></div>
     <button class="btn btn-ghost" onclick="joinRoom()">→ Join Session</button>
-  </div>
-
-  <div style="margin-top:auto;padding-top:12px">
-    <p style="font-size:12px;color:var(--text3);text-align:center;line-height:1.6;font-weight:500">
-      Works securely on Chrome & Edge<br>
-      Both parties can speak and read simultaneously
-    </p>
   </div>
 </div>
 
@@ -207,7 +236,6 @@
   <div class="loading">
     <div class="spin-icon">⚙️</div>
     <p id="conn-msg">Connecting…</p>
-    <span id="conn-sub">Establishing secure link</span>
   </div>
   <button class="btn btn-ghost" onclick="goHome()">← Cancel</button>
 </div>
@@ -225,35 +253,43 @@
 
   <div class="transcript-container">
     <div class="info-row">
-      <span class="slabel" style="margin:0; color:#a78bfa;">Partner's Voice</span>
-      <span class="wc" id="rem-wc">0 words</span>
+      <span class="slabel" id="partner-lbl" style="margin:0; color:#a78bfa;">Partner's Voice</span>
     </div>
     <div class="transcript remote-box" id="remote-box"><span class="ph">Waiting for them to speak…</span></div>
   </div>
 
   <div class="mic-area">
-    <select id="lang-sel" class="lang-select" style="margin-bottom: 20px;">
-      <option value="en-IN">Language: English (India)</option>
-      <option value="en-US">Language: English (US)</option>
-      <option value="en-GB">Language: English (UK)</option>
-      <option value="te-IN">Language: Telugu (తెలుగు)</option>
-      <option value="hi-IN">Language: Hindi (हिंदी)</option>
+    <select id="lang-sel" class="lang-select">
+      <option value="en-IN">Speech Language: English (India)</option>
+      <option value="en-US">Speech Language: English (US)</option>
+      <option value="en-GB">Speech Language: English (UK)</option>
+      <option value="te-IN">Speech Language: Telugu (తెలుగు)</option>
+      <option value="hi-IN">Speech Language: Hindi (हिंदी)</option>
     </select>
-    
     <button class="mic-btn" id="mic-btn" onclick="toggleMic()" disabled>🎙</button>
     <div class="mic-label" id="mic-lbl">Waiting for partner to join…</div>
   </div>
 
   <div class="transcript-container">
     <div class="info-row">
-      <span class="slabel" style="margin:0; color:#34d399;">Your Voice</span>
-      <span class="wc" id="loc-wc">0 words</span>
+      <span class="slabel" id="local-lbl" style="margin:0; color:#34d399;">Your Voice</span>
     </div>
-    <div class="transcript local-box" id="local-box"><span class="ph">Your words appear here as you speak…</span></div>
+    <div class="transcript local-box" id="local-box"><span class="ph">Your translated words appear here…</span></div>
+  </div>
+
+  <div class="chat-wrapper">
+    <span class="slabel" style="color:#fbbf24;">💬 Live Text Chat</span>
+    <div class="chat-box" id="chat-box">
+      <span class="ph">No messages yet. Send a greeting!</span>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendChat()">
+      <button onclick="sendChat()">Send</button>
+    </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn btn-ghost" onclick="clearAll()">🗑 Clear Chat</button>
+    <button class="btn btn-ghost" onclick="clearAll()">🗑 Clear All</button>
     <button class="btn btn-danger" onclick="endSession()">✕ Leave Room</button>
   </div>
 </div>
@@ -262,7 +298,7 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  VoiceBridge v5.4 — Bulletproof Handshake Update
+//  VoiceBridge v6.0 — Voice & Real-Time Text Chat Integration
 // ═══════════════════════════════════════════════════════════════════
 
 if (window.location.protocol === 'file:') {
@@ -272,23 +308,21 @@ if (window.location.protocol === 'file:') {
 const ABLY_CDN = 'https://cdn.ably.com/lib/ably.min-2.js';
 const ABLY_KEY = 'Qy5e8g.F15N0g:RFc-t7Ot13TerkLHivhrKiokU5GvP6a2Ugtcx--ttpY';
 
-let CODE = '', myUID = '';
+let CODE = '', myUID = '', myName = '', partnerName = 'Partner';
 let ablyClient = null, ablyChannel = null, ablyReady = false;
 let recog = null, micOn = false, isRecognizing = false;
 let localTxt = '', remoteTxt = '';
-let peerConnected = false;
-let lastPubTime = 0; 
-let handshakeTimer = null; // New timer for forcing connection
+let peerConnected = false, lastPubTime = 0, handshakeTimer = null; 
 
 myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-// ── Core Setup ────────────────────────────────────────────────────────
+// ── Setup Digits ──────────────────────────────────────────────────────
 (function(){
   const w = document.getElementById('digits');
   for(let i = 0; i < 6; i++){
     const el = document.createElement('input');
     el.type = 'tel'; el.maxLength = 1; el.inputMode = 'numeric';
-    el.setAttribute('aria-label', 'Digit ' + (i+1)); el.id = 'dg' + i;
+    el.id = 'dg' + i;
     el.oninput = e => {
       e.target.value = e.target.value.replace(/\D/, '');
       if(e.target.value && i < 5) document.getElementById('dg'+(i+1)).focus();
@@ -300,12 +334,12 @@ myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 })();
 
+// ── Helpers ───────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
 function txt(id, v){ const e=$(id); if(e) e.textContent = v; }
 function setDot(id, cls){ const d=$(id); d.className = 'dot dot-' + cls; }
 function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function genCode(){ return String(Math.floor(100000 + Math.random() * 900000)); }
-function wCount(s){ return s.trim().split(/\s+/).filter(Boolean).length; }
 
 function toast(msg, ms=3000){
   const t = $('toast'); t.textContent = msg; t.classList.add('show');
@@ -319,78 +353,59 @@ function showPage(id){
 function loadAbly(){ 
   return new Promise((resolve, reject) => {
     if(window.Ably){ resolve(); return; }
-    const s = document.createElement('script');
-    s.src = ABLY_CDN;
-    s.onload = resolve;
-    s.onerror = reject;
+    const s = document.createElement('script'); s.src = ABLY_CDN; s.onload = resolve; s.onerror = reject;
     document.head.appendChild(s);
   });
 }
 
+// ── Pre-Check User Name ───────────────────────────────────────────────
+function checkName() {
+  const n = $('username').value.trim();
+  if (!n) { toast('Please enter your name first!'); return false; }
+  myName = n;
+  txt('local-lbl', 'Your Voice (' + myName + ')');
+  return true;
+}
+
 // ── Ably Network Layer ────────────────────────────────────────────────
 async function connectAbly(){
-  txt('conn-msg', 'Loading engine…');
-  txt('conn-sub', 'Connecting to secure server…');
+  txt('conn-msg', 'Connecting to server…');
 
-  try {
-    await loadAbly();
-  } catch(e){
-    txt('conn-msg', 'Connection failed');
-    txt('conn-sub', 'Check your internet connection and refresh.');
-    return;
-  }
+  try { await loadAbly(); } catch(e){ toast('Network Error. Please refresh.'); return; }
 
-  try {
-    ablyClient = new Ably.Realtime({ key: ABLY_KEY, clientId: myUID });
-  } catch(e){
-    txt('conn-msg', 'Initialization Error');
-    txt('conn-sub', e.message);
-    return;
-  }
+  try { ablyClient = new Ably.Realtime({ key: ABLY_KEY, clientId: myUID }); } 
+  catch(e){ toast('Initialization Error'); return; }
 
   ablyClient.connection.on('connected', async () => {
     ablyReady = true;
-    // Updated channel name to ensure fresh connection
-    const chName = 'vb-v54-' + CODE; 
+    const chName = 'vb-v60-' + CODE; 
     ablyChannel = ablyClient.channels.get(chName);
-
     ablyChannel.subscribe('msg', handleAblyMsg);
     
-    // Attempt standard presence
     await ablyChannel.presence.enter({ uid: myUID });
+    
     ablyChannel.presence.subscribe('enter', mem => { if(mem.clientId !== myUID) onPeerPresence(true); });
     ablyChannel.presence.subscribe('leave', mem => { if(mem.clientId !== myUID) onPeerPresence(false); });
 
     try {
       const resultPage = await ablyChannel.presence.get();
       if (resultPage && resultPage.items) {
-          resultPage.items.forEach(m => { 
-              if(m.clientId !== myUID) onPeerPresence(true); 
-          });
+          resultPage.items.forEach(m => { if(m.clientId !== myUID) onPeerPresence(true); });
       }
-    } catch(err) { console.error("Presence check failed:", err); }
+    } catch(err) {}
 
     showPage('p-room');
     txt('rm-codelbl', 'Code: ' + CODE);
     
     if(!peerConnected) {
-       setDot('rm-dot', 'amber');
-       txt('rm-status', 'Waiting for partner to join…');
+       setDot('rm-dot', 'amber'); txt('rm-status', 'Waiting for partner to join…');
     }
 
-    // =========================================================
-    // THE BULLETPROOF HANDSHAKE:
-    // If Presence fails, we aggressively shout out to the room
-    // =========================================================
-    publish({ t: 'hello' }); // Say hi immediately
-    
-    // Keep saying hi every 1.5 seconds until we get an answer
+    // Shout out our name to the room to complete the handshake
+    publish({ t: 'hello', name: myName }); 
     handshakeTimer = setInterval(() => {
-        if (peerConnected || !ablyReady) {
-            clearInterval(handshakeTimer); // Stop shouting once connected
-        } else {
-            publish({ t: 'hello' });
-        }
+        if (peerConnected || !ablyReady) clearInterval(handshakeTimer);
+        else publish({ t: 'hello', name: myName });
     }, 1500);
   });
 
@@ -408,13 +423,13 @@ function onPeerPresence(isConnected){
     txt('rm-status', 'Partner connected! Tap mic to speak.');
     $('mic-btn').disabled = false;
     txt('mic-lbl', 'Tap mic to start streaming');
-    // Clear handshake timer since we are connected
     if(handshakeTimer) clearInterval(handshakeTimer);
   } else {
     setDot('rm-dot', 'amber');
     txt('rm-status', 'Partner disconnected — waiting…');
     if(!micOn) $('mic-btn').disabled = true;
     txt('mic-lbl', 'Waiting for partner to return…');
+    txt('partner-lbl', 'Partner\'s Voice'); // reset label
   }
 }
 
@@ -422,107 +437,118 @@ function handleAblyMsg(msg){
   if(msg.clientId === myUID) return; 
   
   const d = msg.data;
-  if(!d || d.code !== CODE) return;
-  if(d.uid === myUID) return; 
+  if(!d || d.code !== CODE || d.uid === myUID) return; 
 
-  // ANY incoming message guarantees the partner is in the room!
-  if (!peerConnected) {
-      onPeerPresence(true);
-  }
+  if (!peerConnected) onPeerPresence(true);
 
-  // Handle the Bulletproof Handshake
+  // Identity Handshake
   if (d.t === 'hello') {
-      // The other device is shouting hello. We must reply so they know we are here.
-      publish({ t: 'hello_back' });
+      partnerName = d.name || 'Partner';
+      txt('partner-lbl', partnerName + "'s Voice");
+      publish({ t: 'hello_back', name: myName });
       return; 
   }
   if (d.t === 'hello_back') {
-      // They successfully heard our hello. (We already set peerConnected = true above).
+      partnerName = d.name || 'Partner';
+      txt('partner-lbl', partnerName + "'s Voice");
       return; 
   }
 
-  // Normal messages
-  if(d.t === 'tx'){
-    renderRemote(d.f || '', d.i || '');
+  // Voice Transcript
+  if(d.t === 'tx'){ renderRemote(d.f || '', d.i || ''); }
+  
+  // TEXT CHAT Received
+  if(d.t === 'chat'){
+      appendChat(d.name || partnerName, d.msg, false);
   }
+
+  // Commands
   if(d.t === 'clr'){
-    remoteTxt = ''; 
-    txt('rem-wc', '0 words');
-    $('remote-box').innerHTML = '<span class="ph">Partner cleared chat.</span>';
+    remoteTxt = ''; $('remote-box').innerHTML = '<span class="ph">Partner cleared voice chat.</span>';
+    $('chat-box').innerHTML = '<span class="ph">Partner cleared text chat.</span>';
   }
-  if(d.t === 'bye'){
-    toast('Partner ended the session.');
-    setTimeout(goHome, 1500);
-  }
+  if(d.t === 'bye'){ toast(partnerName + ' ended the session.'); setTimeout(goHome, 1500); }
 }
 
 function publish(obj){
   if(ablyChannel && ablyReady){
-    obj.code = CODE;
-    obj.uid = myUID; 
+    obj.code = CODE; obj.uid = myUID; 
     ablyChannel.publish('msg', obj);
   }
 }
 
+// ── Room Entry ────────────────────────────────────────────────────────
 function createRoom(){
+  if(!checkName()) return;
   CODE = genCode(); 
   $('code-disp').textContent = CODE.split('').join(' ');
-  showPage('p-conn');
-  txt('conn-msg', 'Creating Room…');
-  connectAbly();
+  showPage('p-conn'); connectAbly();
 }
 
 function joinRoom(){
+  if(!checkName()) return;
   let v = '';
   for(let i=0;i<6;i++) v += ($('dg'+i)||{}).value || '';
   if(v.length !== 6){ toast('Please enter all 6 digits.'); return; }
   CODE = v; 
-  showPage('p-conn');
-  txt('conn-msg', 'Joining Room…');
-  connectAbly();
+  showPage('p-conn'); connectAbly();
 }
 
-// ── Hardened Mic Engine ───────────────────────────────────────────────
+// ── Text Chat Engine ──────────────────────────────────────────────────
+function sendChat() {
+    if(!ablyReady || !peerConnected) { toast("Wait for partner to connect."); return; }
+    const input = $('chat-input');
+    const msg = input.value.trim();
+    if(!msg) return;
+
+    // Broadcast over Ably
+    publish({ t: 'chat', name: myName, msg: msg });
+    
+    // Render locally
+    appendChat(myName, msg, true);
+    input.value = ''; // clear box
+}
+
+function appendChat(senderName, msg, isLocal) {
+    const box = $('chat-box');
+    // Remove placeholder if present
+    if(box.innerHTML.includes('No messages yet') || box.innerHTML.includes('cleared text chat')) {
+        box.innerHTML = '';
+    }
+    
+    const div = document.createElement('div');
+    div.className = 'chat-msg ' + (isLocal ? 'local' : 'remote');
+    div.innerHTML = `<span class="chat-name">${escH(senderName)}</span>${escH(msg)}`;
+    
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight; // Auto-scroll to bottom
+}
+
+// ── Voice Mic Engine ──────────────────────────────────────────────────
 function toggleMic(){ micOn ? stopMic() : startMic(); }
 
 function startMic(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){
-    alert('⚠ Speech recognition not supported. Please use Google Chrome.');
-    return;
-  }
+  if(!SR){ alert('⚠ Speech recognition not supported. Please use Google Chrome.'); return; }
 
   recog = new SR();
-  recog.continuous = true;
-  recog.interimResults = true;
-  
-  const selectedLang = $('lang-sel') ? $('lang-sel').value : 'en-IN';
-  recog.lang = selectedLang; 
+  recog.continuous = true; recog.interimResults = true;
+  recog.lang = $('lang-sel') ? $('lang-sel').value : 'en-IN'; 
   recog.maxAlternatives = 1;
 
   recog.onstart = () => {
-    isRecognizing = true;
-    micOn = true;
-    $('mic-btn').classList.add('live');
-    $('mic-btn').textContent = '🔴';
-    txt('mic-lbl', 'Listening… speak now');
-    setDot('rm-dot', 'pulse');
-    txt('rm-status', 'Mic live — broadcasting your voice');
+    isRecognizing = true; micOn = true;
+    $('mic-btn').classList.add('live'); $('mic-btn').textContent = '🔴';
+    txt('mic-lbl', 'Listening… speak now'); setDot('rm-dot', 'pulse'); txt('rm-status', 'Mic live — broadcasting voice');
   };
 
   recog.onresult = e => {
     let interim = '', nf = '';
     for(let i = e.resultIndex; i < e.results.length; i++){
       const t = e.results[i][0].transcript;
-      if(e.results[i].isFinal) nf += t + ' ';
-      else interim += t;
+      if(e.results[i].isFinal) nf += t + ' '; else interim += t;
     }
-    
-    if(nf){ 
-        localTxt += nf; 
-        const wc = wCount(localTxt); 
-        txt('loc-wc', wc + ' word' + (wc!==1?'s':'')); 
-    }
+    if(nf) localTxt += nf; 
     
     renderLocal(localTxt, interim);
     
@@ -535,8 +561,7 @@ function startMic(){
 
   recog.onerror = ev => {
     if(ev.error === 'no-speech' || ev.error === 'aborted') return;
-    toast('Mic error: ' + ev.error);
-    stopMic();
+    toast('Mic error: ' + ev.error); stopMic();
   };
 
   recog.onend = () => {
@@ -544,19 +569,13 @@ function startMic(){
     if(micOn){
       setTimeout(() => {
         if(micOn && !isRecognizing){
-            try { 
-                recog.start(); 
-            } catch(e) { 
-                toast('Mobile browser paused your mic. Tap to resume.');
-                stopMic(); 
-            }
+            try { recog.start(); } catch(e) { toast('Browser paused mic. Tap to resume.'); stopMic(); }
         }
       }, 400); 
     }
   };
 
-  try { recog.start(); }
-  catch(e){ toast('Could not start microphone'); }
+  try { recog.start(); } catch(e){ toast('Could not start microphone'); }
 }
 
 function stopMic(){
@@ -564,19 +583,15 @@ function stopMic(){
   if(recog && isRecognizing){ try{ recog.stop(); }catch(e){} }
   isRecognizing = false;
   
-  const mb = $('mic-btn');
-  mb.classList.remove('live');
-  mb.textContent = '🎙';
-  txt('mic-lbl', 'Mic paused — tap to resume');
+  const mb = $('mic-btn'); mb.classList.remove('live'); mb.textContent = '🎙'; txt('mic-lbl', 'Mic paused — tap to resume');
   
   if(peerConnected){ setDot('rm-dot','green'); txt('rm-status','Partner connected — mic paused'); }
   else { setDot('rm-dot','amber'); txt('rm-status','Waiting for partner…'); }
 }
 
-// ── Rendering & Cleanup ───────────────────────────────────────────────
 function renderLocal(f, i){
   const b = $('local-box');
-  if(!f && !i){ b.innerHTML = '<span class="ph">Your words appear here as you speak…</span>'; return; }
+  if(!f && !i){ b.innerHTML = '<span class="ph">Your translated words appear here…</span>'; return; }
   b.innerHTML = '<span>' + escH(f) + '</span><span class="interim">' + escH(i) + '</span>';
   b.scrollTop = b.scrollHeight;
 }
@@ -585,44 +600,36 @@ function renderRemote(f, i){
   const b = $('remote-box');
   if(!f && !i){ b.innerHTML = '<span class="ph">Waiting for them to speak…</span>'; return; }
   remoteTxt = f;
-  const wc = wCount(f + ' ' + i); 
-  txt('rem-wc', wc + ' word' + (wc!==1?'s':''));
   b.innerHTML = '<span>' + escH(f) + '</span><span class="interim">' + escH(i) + '</span>';
   b.scrollTop = b.scrollHeight;
 }
 
 function clearAll(){
-  localTxt = ''; txt('loc-wc','0 words');
-  renderLocal('','');
-  remoteTxt = ''; txt('rem-wc','0 words');
-  renderRemote('','');
-  publish({ t:'clr' });
-  toast('Chat cleared');
+  localTxt = ''; renderLocal('','');
+  remoteTxt = ''; renderRemote('','');
+  $('chat-box').innerHTML = '<span class="ph">No messages yet. Send a greeting!</span>';
+  publish({ t:'clr' }); toast('Cleared');
 }
 
-function endSession(){
-  publish({ t:'bye' });
-  cleanup(); goHome();
-}
+function endSession(){ publish({ t:'bye' }); cleanup(); goHome(); }
 
 function cleanup(){
   if(micOn) stopMic();
   if(handshakeTimer) clearInterval(handshakeTimer);
   if(ablyChannel){ try{ ablyChannel.presence.leave(); ablyChannel.unsubscribe(); }catch(e){} ablyChannel=null; }
   if(ablyClient){ try{ ablyClient.close(); }catch(e){} ablyClient=null; }
-  ablyReady=false; peerConnected=false;
+  ablyReady=false; peerConnected=false; partnerName = 'Partner';
 }
 
 function goHome(){
   cleanup(); CODE=''; localTxt=''; remoteTxt='';
   $('code-disp').textContent='— — — — — —';
+  $('chat-box').innerHTML = '<span class="ph">No messages yet. Send a greeting!</span>';
   for(let i=0;i<6;i++){const ci=$('dg'+i);if(ci)ci.value='';}
   showPage('p-home');
 }
 
-window.addEventListener('beforeunload', () => {
-    if(ablyChannel) { ablyChannel.presence.leave(); }
-});
+window.addEventListener('beforeunload', () => { if(ablyChannel) ablyChannel.presence.leave(); });
 </script>
 </body>
 </html>
