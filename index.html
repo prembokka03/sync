@@ -45,20 +45,17 @@
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Header */
   .hd { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; }
   .hd-icon { width: 48px; height: 48px; background: var(--gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.25); }
   .hd-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
   .hd-sub { font-size: 13px; color: var(--text2); margin-top: 2px; font-weight: 500; }
 
-  /* Cards */
   .card { 
     background: var(--glass-bg); border: 1px solid var(--glass-border); 
     border-radius: var(--radius); padding: 24px; margin-bottom: 24px; 
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   }
 
-  /* Code display */
   .code-big { 
     font-size: 46px; font-weight: 800; letter-spacing: 0.25em; 
     background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -66,7 +63,6 @@
   }
   .code-hint { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 24px; font-weight: 500; }
 
-  /* Digit inputs */
   .digits { display: flex; gap: 10px; justify-content: center; margin-bottom: 24px; }
   .digits input {
     width: 48px; height: 60px; font-size: 28px; font-weight: 700;
@@ -77,7 +73,6 @@
   }
   .digits input:focus { border-color: #a855f7; background: rgba(168, 85, 247, 0.05); box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); transform: translateY(-2px); }
 
-  /* Dropdown Settings */
   .lang-select {
     width: 100%; padding: 14px; border-radius: var(--radius-sm);
     background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
@@ -88,7 +83,6 @@
   .lang-select option { background: var(--bg-color); color: #fff; }
   .lang-select:focus { border-color: #a855f7; }
 
-  /* Buttons */
   .btn { 
     width: 100%; padding: 16px; border-radius: var(--radius-sm); 
     font-size: 15px; font-weight: 600; cursor: pointer; border: none; 
@@ -108,7 +102,6 @@
   .btn-row { display: flex; gap: 12px; margin-top: 16px; }
   .btn-row .btn { flex: 1; }
 
-  /* Status */
   .status { 
     display: flex; align-items: center; gap: 12px; padding: 14px 18px; 
     background: var(--glass-bg); border-radius: var(--radius-sm); 
@@ -125,7 +118,6 @@
   @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
   @keyframes spin { to{transform:rotate(360deg)} }
 
-  /* Mic button */
   .mic-area { text-align: center; margin: 12px 0 24px; }
   .mic-btn {
     width: 80px; height: 80px; border-radius: 50%;
@@ -149,7 +141,6 @@
   }
   .mic-label { font-size: 14px; font-weight: 500; color: var(--text2); }
 
-  /* Dual Transcripts */
   .transcript-container { margin-bottom: 16px; }
   .transcript {
     background: rgba(0, 0, 0, 0.2); border: 1px solid var(--glass-border);
@@ -158,30 +149,25 @@
     word-break: break-word; color: #fff; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
   }
   
-  .remote-box { border-left: 3px solid #6366f1; } /* Blue tint for partner */
-  .local-box { border-left: 3px solid #10b981; }  /* Green tint for you */
+  .remote-box { border-left: 3px solid #6366f1; } 
+  .local-box { border-left: 3px solid #10b981; }  
   
   .ph { color: var(--text3); font-size: 14px; font-weight: 400; font-style: italic; }
   .interim { color: var(--text2); }
 
-  /* Info row */
   .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
   .wc { color: var(--text2); font-size: 12px; font-weight: 500; }
 
-  /* Connecting */
   .loading { text-align: center; padding: 80px 0; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
   .spin-icon { font-size: 48px; animation: spin 1s linear infinite; display: inline-block; filter: drop-shadow(0 0 10px rgba(168,85,247,0.4)); }
   .loading p { color: var(--text); font-size: 16px; font-weight: 600; }
   .loading span { color: var(--text2); font-size: 14px; font-weight: 400; }
 
-  /* Label */
   .slabel { font-size: 12px; font-weight: 700; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; }
 
-  /* Toast */
   .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px); background: #fff; color: #0f1016; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; white-space: nowrap; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* Scrollbar */
   .transcript::-webkit-scrollbar { width: 6px; }
   .transcript::-webkit-scrollbar-track { background: transparent; }
   .transcript::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
@@ -276,26 +262,26 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════════════
-//  VoiceBridge v5.0 — Two-Way Duplex Communication
+//  VoiceBridge v5.3 — Mobile Auto-Recovery Update
 // ═══════════════════════════════════════════════════════════════════
 
 if (window.location.protocol === 'file:') {
-  alert("Warning: The Web Speech API requires a local server (localhost) or HTTPS. Running this directly from a file:// path will block microphone access.");
+  alert("Warning: Web Speech API requires localhost or HTTPS.");
 }
 
 const ABLY_CDN = 'https://cdn.ably.com/lib/ably.min-2.js';
-// Using the working key you provided
 const ABLY_KEY = 'Qy5e8g.F15N0g:RFc-t7Ot13TerkLHivhrKiokU5GvP6a2Ugtcx--ttpY';
 
 let CODE = '', myUID = '';
 let ablyClient = null, ablyChannel = null, ablyReady = false;
-let recog = null, micOn = false;
+let recog = null, micOn = false, isRecognizing = false;
 let localTxt = '', remoteTxt = '';
 let peerConnected = false;
+let lastPubTime = 0; 
 
 myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-// ── Build digit inputs ────────────────────────────────────────────────
+// ── Core Setup ────────────────────────────────────────────────────────
 (function(){
   const w = document.getElementById('digits');
   for(let i = 0; i < 6; i++){
@@ -313,7 +299,6 @@ myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   }
 })();
 
-// ── Helpers ──────────────────────────────────────────────────────────
 function $(id){ return document.getElementById(id); }
 function txt(id, v){ const e=$(id); if(e) e.textContent = v; }
 function setDot(id, cls){ const d=$(id); d.className = 'dot dot-' + cls; }
@@ -330,7 +315,6 @@ function showPage(id){
   $(id).classList.add('active');
 }
 
-// ── Load Ably SDK ─────────────────────────────────────────────────────
 function loadAbly(){ 
   return new Promise((resolve, reject) => {
     if(window.Ably){ resolve(); return; }
@@ -342,7 +326,7 @@ function loadAbly(){
   });
 }
 
-// ── Connect to Ably channel ───────────────────────────────────────────
+// ── Ably Network Layer ────────────────────────────────────────────────
 async function connectAbly(){
   txt('conn-msg', 'Loading engine…');
   txt('conn-sub', 'Connecting to secure server…');
@@ -365,10 +349,10 @@ async function connectAbly(){
 
   ablyClient.connection.on('connected', async () => {
     ablyReady = true;
-    const chName = 'vb-twoway-' + CODE; // Changed channel namespace for safety
+    const chName = 'vb-v53-' + CODE; 
     ablyChannel = ablyClient.channels.get(chName);
 
-    ablyChannel.subscribe(handleAblyMsg);
+    ablyChannel.subscribe('msg', handleAblyMsg);
     await ablyChannel.presence.enter({ uid: myUID });
 
     ablyChannel.presence.subscribe('enter', mem => {
@@ -390,7 +374,6 @@ async function connectAbly(){
       console.error("Presence check failed:", err);
     }
 
-    // Go to unified room page
     showPage('p-room');
     txt('rm-codelbl', 'Code: ' + CODE);
     
@@ -400,9 +383,11 @@ async function connectAbly(){
     }
   });
 
+  // Mobile network recovery
   ablyClient.connection.on('disconnected', () => {
     ablyReady = false;
     setDot('rm-dot','red'); txt('rm-status','Reconnecting to server…'); 
+    setTimeout(() => { if(ablyClient) ablyClient.connection.connect(); }, 2000);
   });
 }
 
@@ -424,9 +409,11 @@ function onPeerPresence(isConnected){
 }
 
 function handleAblyMsg(msg){
-  if(msg.clientId === myUID) return; // Ignore our own broadcast
+  if(msg.clientId === myUID) return; 
+  
   const d = msg.data;
   if(!d || d.code !== CODE) return;
+  if(d.uid === myUID) return; 
 
   if(d.t === 'tx'){
     renderRemote(d.f || '', d.i || '');
@@ -445,11 +432,11 @@ function handleAblyMsg(msg){
 function publish(obj){
   if(ablyChannel && ablyReady){
     obj.code = CODE;
+    obj.uid = myUID; 
     ablyChannel.publish('msg', obj);
   }
 }
 
-// ── Room actions ─────────────────────────────────────────────────────
 function createRoom(){
   CODE = genCode(); 
   $('code-disp').textContent = CODE.split('').join(' ');
@@ -468,13 +455,13 @@ function joinRoom(){
   connectAbly();
 }
 
-// ── Microphone / Speech Recognition ──────────────────────────────────
+// ── Hardened Mic Engine ───────────────────────────────────────────────
 function toggleMic(){ micOn ? stopMic() : startMic(); }
 
 function startMic(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
-    alert('⚠ Speech recognition not supported. Please use Google Chrome or MS Edge.');
+    alert('⚠ Speech recognition not supported. Please use Google Chrome.');
     return;
   }
 
@@ -482,12 +469,12 @@ function startMic(){
   recog.continuous = true;
   recog.interimResults = true;
   
-  // DYNAMIC LANGUAGE FIX 
   const selectedLang = $('lang-sel') ? $('lang-sel').value : 'en-IN';
   recog.lang = selectedLang; 
   recog.maxAlternatives = 1;
 
   recog.onstart = () => {
+    isRecognizing = true;
     micOn = true;
     $('mic-btn').classList.add('live');
     $('mic-btn').textContent = '🔴';
@@ -503,38 +490,56 @@ function startMic(){
       if(e.results[i].isFinal) nf += t + ' ';
       else interim += t;
     }
+    
     if(nf){ 
         localTxt += nf; 
         const wc = wCount(localTxt); 
         txt('loc-wc', wc + ' word' + (wc!==1?'s':'')); 
     }
+    
     renderLocal(localTxt, interim);
-    publish({ t:'tx', f:localTxt, i:interim }); // Broadcast to partner
-  };
-
-  recog.onerror = ev => {
-    if(ev.error !== 'no-speech') {
-        toast('Mic error: ' + ev.error);
-        stopMic();
+    
+    const now = Date.now();
+    if (nf || (now - lastPubTime > 250)) {
+        publish({ t:'tx', f:localTxt, i:interim });
+        lastPubTime = now;
     }
   };
 
+  // Gracefully ignore silent errors, catch true failures
+  recog.onerror = ev => {
+    if(ev.error === 'no-speech' || ev.error === 'aborted') return;
+    toast('Mic error: ' + ev.error);
+    stopMic();
+  };
+
+  // The critical mobile fix: Auto-Recovery Watchdog
   recog.onend = () => {
+    isRecognizing = false;
     if(micOn){
       setTimeout(() => {
-        try { if(micOn) recog.start(); }
-        catch(e){ console.warn("Mic restart ignored"); }
-      }, 350); 
+        if(micOn && !isRecognizing){
+            try { 
+                recog.start(); 
+            } catch(e) { 
+                // The browser refused to wake the mic up
+                toast('Mobile browser paused your mic. Tap to resume.');
+                stopMic(); 
+            }
+        }
+      }, 400); 
     }
   };
 
   try { recog.start(); }
-  catch(e){ toast('Could not start mic'); }
+  catch(e){ toast('Could not start microphone'); }
 }
 
 function stopMic(){
   micOn = false;
-  if(recog){ try{ recog.stop(); }catch(e){} recog = null; }
+  if(recog && isRecognizing){ try{ recog.stop(); }catch(e){} }
+  isRecognizing = false;
+  
   const mb = $('mic-btn');
   mb.classList.remove('live');
   mb.textContent = '🎙';
@@ -544,7 +549,7 @@ function stopMic(){
   else { setDot('rm-dot','amber'); txt('rm-status','Waiting for partner…'); }
 }
 
-// ── Render ────────────────────────────────────────────────────────────
+// ── Rendering & Cleanup ───────────────────────────────────────────────
 function renderLocal(f, i){
   const b = $('local-box');
   if(!f && !i){ b.innerHTML = '<span class="ph">Your words appear here as you speak…</span>'; return; }
@@ -562,17 +567,11 @@ function renderRemote(f, i){
   b.scrollTop = b.scrollHeight;
 }
 
-// ── Controls ──────────────────────────────────────────────────────────
 function clearAll(){
-  // Clear local
   localTxt = ''; txt('loc-wc','0 words');
   renderLocal('','');
-  
-  // Clear remote (locally visually)
   remoteTxt = ''; txt('rem-wc','0 words');
   renderRemote('','');
-
-  // Notify partner to clear their remote view (which is our local text)
   publish({ t:'clr' });
   toast('Chat cleared');
 }
