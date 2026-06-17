@@ -130,8 +130,9 @@
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
   }
   
-  /* Screen sharing shouldn't be mirrored */
-  .video-box video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  /* --- Video Mirroring Fixes --- */
+  .video-box video { width: 100%; height: 100%; object-fit: cover; }
+  .video-box video.mirrored { transform: scaleX(-1); }
   .video-box video.screen-share { transform: scaleX(1); object-fit: contain; background: #000; }
 
   .video-label { 
@@ -155,7 +156,6 @@
   .ctrl-btn.danger { background: var(--red); border-color: var(--red); }
   .ctrl-btn.danger:hover { background: var(--red-hover); }
 
-  /* Active state for screen share button */
   .ctrl-btn.active-share { background: #e8f0fe; color: var(--accent); border-color: #e8f0fe; }
   .ctrl-btn.active-share:hover { background: #d2e3fc; }
 
@@ -551,6 +551,7 @@ async function initWebRTC(isInitiator = true) {
     try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: $('call-audio-check').checked });
         $('local-video').srcObject = localStream;
+        $('local-video').classList.add('mirrored'); // Mirror webcam by default
     } catch(err) { toast('Camera/Mic permission denied.'); return; }
 
     peerConnection = new RTCPeerConnection(iceServers);
@@ -591,9 +592,14 @@ function toggleAudio() {
     } else { toast('Audio wasn\'t included on join.'); }
 }
 
-// ── Screen Sharing Logic ──
 async function toggleScreenShare() {
     if (!peerConnection) { toast('Start video call first.'); return; }
+
+    // Guardrail for mobile browsers
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        toast('Screen sharing is not supported on this device/browser.');
+        return;
+    }
 
     if (!isScreenSharing) {
         try {
@@ -601,21 +607,18 @@ async function toggleScreenShare() {
             isScreenSharing = true;
 
             const screenTrack = screenStream.getVideoTracks()[0];
-            
-            // Replace the outgoing video track with the screen track
             const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
             if (sender) sender.replaceTrack(screenTrack);
 
-            // Show screen locally & style it properly (don't flip screen text)
             $('local-video').srcObject = screenStream;
+            $('local-video').classList.remove('mirrored'); // Remove mirror for screen sharing
             $('local-video').classList.add('screen-share');
             $('btn-toggle-screen').classList.add('active-share');
 
-            // Handle when user clicks browser's native "Stop sharing" button
             screenTrack.onended = () => { stopScreenShare(); };
         } catch (err) {
             console.error(err);
-            toast('Screen sharing cancelled.');
+            toast('Screen sharing cancelled or denied.');
         }
     } else {
         stopScreenShare();
@@ -634,13 +637,13 @@ function stopScreenShare() {
     $('btn-toggle-screen').classList.remove('active-share');
     $('local-video').classList.remove('screen-share');
 
-    // Switch back to camera
     if (localStream) {
         const videoTrack = localStream.getVideoTracks()[0];
         if (videoTrack) {
             const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
             if (sender) sender.replaceTrack(videoTrack);
             $('local-video').srcObject = localStream;
+            $('local-video').classList.add('mirrored'); // Re-enable mirror for webcam
         }
     }
 }
