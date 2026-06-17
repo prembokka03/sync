@@ -130,7 +130,6 @@
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
   }
   
-  /* --- Video Mirroring Fixes --- */
   .video-box video { width: 100%; height: 100%; object-fit: cover; }
   .video-box video.mirrored { transform: scaleX(-1); }
   .video-box video.screen-share { transform: scaleX(1); object-fit: contain; background: #000; }
@@ -410,7 +409,7 @@ const svgVidOff = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const svgMicOn = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`;
 const svgMicOff = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.88"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>`;
 
-let CODE = '', myUID = '', myName = '', partnerName = 'Partner';
+let CODE = '', myUID = '', myName = '', partnerName = 'Partner', partnerUID = '';
 let ablyClient = null, ablyChannel = null, ablyReady = false;
 let recog = null, micOn = false, isRecognizing = false;
 let localTxt = '', remoteTxt = '';
@@ -419,6 +418,10 @@ let peerConnected = false, lastPubTime = 0, handshakeTimer = null;
 let peerConnection = null, localStream = null;
 let screenStream = null, isScreenSharing = false;
 let isVideoMuted = false, isAudioMuted = false;
+
+// Variables to track WebRTC states robustly
+let isVideoReady = false; 
+let incomingOffer = null;
 const iceServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -518,8 +521,20 @@ async function handleAblyMsg(msg){
 
   if (d.t === 'hello' || d.t === 'hello_back') {
       partnerName = d.name || 'Partner';
+      partnerUID = d.uid; // Save partner ID to manage calling correctly
       txt('partner-lbl', partnerName); txt('remote-vid-lbl', partnerName);
-      if(d.t === 'hello') publish({ t: 'hello_back', name: myName });
+      
+      if (d.t === 'hello') {
+          publish({ t: 'hello_back', name: myName });
+          // If I am already ready with my camera, send them an offer automatically
+          if (isVideoReady && peerConnection && myUID > partnerUID) {
+              try {
+                  const offer = await peerConnection.createOffer();
+                  await peerConnection.setLocalDescription(offer);
+                  publish({ t: 'webrtc-offer', offer: offer });
+              } catch(e) {}
+          }
+      }
       return; 
   }
 
@@ -527,14 +542,32 @@ async function handleAblyMsg(msg){
   if(d.t === 'chat'){ appendChat(d.name || partnerName, d.msg, false); }
   
   if (d.t === 'webrtc-offer') {
-      await initWebRTC(false); 
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(d.offer));
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
-      publish({ t: 'webrtc-answer', answer: answer });
+      if (isVideoReady && peerConnection) {
+          // If my camera is already on, answer automatically
+          try {
+              await peerConnection.setRemoteDescription(new RTCSessionDescription(d.offer));
+              const answer = await peerConnection.createAnswer();
+              await peerConnection.setLocalDescription(answer);
+              publish({ t: 'webrtc-answer', answer: answer });
+          } catch(e) {}
+      } else {
+          // Camera not on yet. Store offer and prompt the user to click the button.
+          incomingOffer = d.offer;
+          toast(partnerName + " started video. Click 'Join with Video' to connect.", 5000);
+      }
   }
-  if (d.t === 'webrtc-answer') { await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); }
-  if (d.t === 'webrtc-ice') { try { await peerConnection.addIceCandidate(new RTCIceCandidate(d.candidate)); } catch(e){} }
+  
+  if (d.t === 'webrtc-answer') { 
+      try {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); 
+      } catch(e) {}
+  }
+  
+  if (d.t === 'webrtc-ice') { 
+      try { 
+          await peerConnection.addIceCandidate(new RTCIceCandidate(d.candidate)); 
+      } catch(e) {} 
+  }
 
   if(d.t === 'bye'){ toast(partnerName + ' left the meeting.'); setTimeout(goHome, 1500); }
 }
@@ -544,15 +577,23 @@ function publish(obj){ if(ablyChannel && ablyReady){ obj.code = CODE; obj.uid = 
 function createRoom(){ if(!checkName()) return; CODE = genCode(); $('code-disp').textContent = CODE; showPage('p-conn'); connectAbly(); }
 function joinRoom(){ if(!checkName()) return; let v = ''; for(let i=0;i<6;i++) v += ($('dg'+i)||{}).value || ''; if(v.length !== 6){ toast('Please enter 6 digits'); return; } CODE = v; showPage('p-conn'); connectAbly(); }
 
-async function initWebRTC(isInitiator = true) {
+async function initWebRTC() {
     if (peerConnection) return; 
-    $('video-wrapper').classList.add('active'); $('video-start-row').style.display = 'none'; $('video-controls').style.display = 'flex'; 
 
     try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: $('call-audio-check').checked });
+        
+        // Hide button ONLY if camera succeeds. If they deny permissions, they can try again.
+        $('video-wrapper').classList.add('active'); 
+        $('video-start-row').style.display = 'none'; 
+        $('video-controls').style.display = 'flex'; 
+        
         $('local-video').srcObject = localStream;
-        $('local-video').classList.add('mirrored'); // Mirror webcam by default
-    } catch(err) { toast('Camera/Mic permission denied.'); return; }
+        $('local-video').classList.add('mirrored'); 
+    } catch(err) { 
+        toast('Camera/Mic permission denied.'); 
+        return; 
+    }
 
     peerConnection = new RTCPeerConnection(iceServers);
     localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
@@ -560,13 +601,31 @@ async function initWebRTC(isInitiator = true) {
     peerConnection.onicecandidate = event => { if (event.candidate) { publish({ t: 'webrtc-ice', candidate: event.candidate }); } };
 }
 
+// ── Fixed Video Initiation Logic ──
 async function startVideoCall() {
-    if (!peerConnected) { toast('Wait for partner to join first.'); return; }
-    await initWebRTC(true);
-    if (peerConnection) {
-        const offer = await peerConnection.createOffer();
-        await peerConnection.setLocalDescription(offer);
-        publish({ t: 'webrtc-offer', offer: offer });
+    await initWebRTC(); 
+    if (!peerConnection) return; // Stop if camera failed
+    
+    isVideoReady = true;
+
+    if (incomingOffer) {
+        // Partner sent an offer while we were waiting. Answer it!
+        try {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingOffer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            publish({ t: 'webrtc-answer', answer: answer });
+            incomingOffer = null; // Clear it out
+        } catch(e) {}
+    } else if (peerConnected && myUID > partnerUID) {
+        // Partner is connected, we haven't received an offer, so we initiate!
+        try {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            publish({ t: 'webrtc-offer', offer: offer });
+        } catch(e) {}
+    } else if (!peerConnected) {
+        toast('Camera on. Waiting for partner to join...');
     }
 }
 
@@ -595,7 +654,6 @@ function toggleAudio() {
 async function toggleScreenShare() {
     if (!peerConnection) { toast('Start video call first.'); return; }
 
-    // Guardrail for mobile browsers
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
         toast('Screen sharing is not supported on this device/browser.');
         return;
@@ -611,7 +669,7 @@ async function toggleScreenShare() {
             if (sender) sender.replaceTrack(screenTrack);
 
             $('local-video').srcObject = screenStream;
-            $('local-video').classList.remove('mirrored'); // Remove mirror for screen sharing
+            $('local-video').classList.remove('mirrored'); 
             $('local-video').classList.add('screen-share');
             $('btn-toggle-screen').classList.add('active-share');
 
@@ -643,7 +701,7 @@ function stopScreenShare() {
             const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
             if (sender) sender.replaceTrack(videoTrack);
             $('local-video').srcObject = localStream;
-            $('local-video').classList.add('mirrored'); // Re-enable mirror for webcam
+            $('local-video').classList.add('mirrored'); 
         }
     }
 }
@@ -701,6 +759,9 @@ function cleanup(){
   isVideoMuted = false; isAudioMuted = false; 
   $('btn-toggle-video').innerHTML = svgVidOn; $('btn-toggle-video').style.color = ''; 
   $('btn-toggle-audio').innerHTML = svgMicOn; $('btn-toggle-audio').style.color = '';
+  
+  // Reset WebRTC trackers
+  incomingOffer = null; isVideoReady = false; partnerUID = '';
   
   if(ablyChannel){ try{ ablyChannel.presence.leave(); ablyChannel.unsubscribe(); }catch(e){} ablyChannel=null; }
   if(ablyClient){ try{ ablyClient.close(); }catch(e){} ablyClient=null; }
