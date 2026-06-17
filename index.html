@@ -422,6 +422,7 @@ let isVideoMuted = false, isAudioMuted = false;
 // Variables to track WebRTC states robustly
 let isVideoReady = false; 
 let incomingOffer = null;
+let iceQueue = []; // Queue to hold network routes until ready
 const iceServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
 myUID = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -521,12 +522,11 @@ async function handleAblyMsg(msg){
 
   if (d.t === 'hello' || d.t === 'hello_back') {
       partnerName = d.name || 'Partner';
-      partnerUID = d.uid; // Save partner ID to manage calling correctly
+      partnerUID = d.uid; 
       txt('partner-lbl', partnerName); txt('remote-vid-lbl', partnerName);
       
       if (d.t === 'hello') {
           publish({ t: 'hello_back', name: myName });
-          // If I am already ready with my camera, send them an offer automatically
           if (isVideoReady && peerConnection && myUID > partnerUID) {
               try {
                   const offer = await peerConnection.createOffer();
@@ -543,15 +543,18 @@ async function handleAblyMsg(msg){
   
   if (d.t === 'webrtc-offer') {
       if (isVideoReady && peerConnection) {
-          // If my camera is already on, answer automatically
           try {
               await peerConnection.setRemoteDescription(new RTCSessionDescription(d.offer));
               const answer = await peerConnection.createAnswer();
               await peerConnection.setLocalDescription(answer);
               publish({ t: 'webrtc-answer', answer: answer });
+              
+              // Process queued ICE candidates now that description is set
+              while(iceQueue.length) {
+                  try { await peerConnection.addIceCandidate(new RTCIceCandidate(iceQueue.shift())); } catch(e){}
+              }
           } catch(e) {}
       } else {
-          // Camera not on yet. Store offer and prompt the user to click the button.
           incomingOffer = d.offer;
           toast(partnerName + " started video. Click 'Join with Video' to connect.", 5000);
       }
@@ -560,13 +563,20 @@ async function handleAblyMsg(msg){
   if (d.t === 'webrtc-answer') { 
       try {
           await peerConnection.setRemoteDescription(new RTCSessionDescription(d.answer)); 
+          // Process queued ICE candidates now that description is set
+          while(iceQueue.length) {
+              try { await peerConnection.addIceCandidate(new RTCIceCandidate(iceQueue.shift())); } catch(e){}
+          }
       } catch(e) {}
   }
   
   if (d.t === 'webrtc-ice') { 
-      try { 
-          await peerConnection.addIceCandidate(new RTCIceCandidate(d.candidate)); 
-      } catch(e) {} 
+      // If ready, process ICE. If not ready, save it to the queue!
+      if (peerConnection && peerConnection.remoteDescription) {
+          try { await peerConnection.addIceCandidate(new RTCIceCandidate(d.candidate)); } catch(e) {}
+      } else {
+          iceQueue.push(d.candidate);
+      }
   }
 
   if(d.t === 'bye'){ toast(partnerName + ' left the meeting.'); setTimeout(goHome, 1500); }
@@ -583,7 +593,6 @@ async function initWebRTC() {
     try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: $('call-audio-check').checked });
         
-        // Hide button ONLY if camera succeeds. If they deny permissions, they can try again.
         $('video-wrapper').classList.add('active'); 
         $('video-start-row').style.display = 'none'; 
         $('video-controls').style.display = 'flex'; 
@@ -601,24 +610,26 @@ async function initWebRTC() {
     peerConnection.onicecandidate = event => { if (event.candidate) { publish({ t: 'webrtc-ice', candidate: event.candidate }); } };
 }
 
-// ── Fixed Video Initiation Logic ──
 async function startVideoCall() {
     await initWebRTC(); 
-    if (!peerConnection) return; // Stop if camera failed
+    if (!peerConnection) return; 
     
     isVideoReady = true;
 
     if (incomingOffer) {
-        // Partner sent an offer while we were waiting. Answer it!
         try {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(incomingOffer));
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
             publish({ t: 'webrtc-answer', answer: answer });
-            incomingOffer = null; // Clear it out
+            incomingOffer = null; 
+            
+            // Process queued ICE candidates now that description is set
+            while(iceQueue.length) {
+                try { await peerConnection.addIceCandidate(new RTCIceCandidate(iceQueue.shift())); } catch(e){}
+            }
         } catch(e) {}
     } else if (peerConnected && myUID > partnerUID) {
-        // Partner is connected, we haven't received an offer, so we initiate!
         try {
             const offer = await peerConnection.createOffer();
             await peerConnection.setLocalDescription(offer);
@@ -760,8 +771,7 @@ function cleanup(){
   $('btn-toggle-video').innerHTML = svgVidOn; $('btn-toggle-video').style.color = ''; 
   $('btn-toggle-audio').innerHTML = svgMicOn; $('btn-toggle-audio').style.color = '';
   
-  // Reset WebRTC trackers
-  incomingOffer = null; isVideoReady = false; partnerUID = '';
+  incomingOffer = null; isVideoReady = false; partnerUID = ''; iceQueue = []; // Reset queue!
   
   if(ablyChannel){ try{ ablyChannel.presence.leave(); ablyChannel.unsubscribe(); }catch(e){} ablyChannel=null; }
   if(ablyClient){ try{ ablyClient.close(); }catch(e){} ablyClient=null; }
